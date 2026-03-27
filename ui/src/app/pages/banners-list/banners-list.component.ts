@@ -40,7 +40,7 @@ export class BannersListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.appHeaderService.setPageHeaderData({
-      title: 'Banners List',
+      title: 'Banners',
       showBack: false,
       showAddButton: true,
     });

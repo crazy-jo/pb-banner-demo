@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class AppHeaderService {
-  readonly pageTitle = signal<string>('Untitled');
+  readonly pageTitle = signal<string>('Banners');
   readonly showBack = signal<boolean>(false);
   readonly showAddButton = signal<boolean>(false);
 
@@ -21,7 +21,7 @@ export class AppHeaderService {
   }
 
   resetHeaderData(): void {
-    this.pageTitle.set('Untitled');
+    this.pageTitle.set('Banners');
     this.showBack.set(false);
     this.showAddButton.set(false);
   }
