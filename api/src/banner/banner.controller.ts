@@ -23,7 +23,8 @@ export class BannerController {
   constructor(private readonly bannerService: BannerService) {}
 
   @Get()
-  public getBanners() {
+  public async getBanners() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return this.bannerService.getBanners();
   }
 
