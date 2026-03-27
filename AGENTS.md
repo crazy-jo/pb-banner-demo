@@ -1,4 +1,3 @@
-
 You are an expert in TypeScript, Angular, and scalable web application development. You write functional, maintainable, performant, and accessible code following Angular and TypeScript best practices.
 
 ## TypeScript Best Practices
@@ -53,3 +52,27 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Design services around a single responsibility
 - Use the `providedIn: 'root'` option for singleton services
 - Use the `inject()` function instead of constructor injection
+
+## Angular Material Guidelines
+
+- Use Angular Material components for all UI elements, especially forms.
+- All forms MUST use Material components such as:
+  - `MatFormField` + `MatInput` for inputs
+  - `MatSelect` for dropdowns
+  - `MatCheckbox` and `MatRadio` for selections
+  - `MatButton` / `MatIconButton` for actions
+  - `MatDialog` for modals and form dialogs
+  - `MatIcon` for icons
+
+- Import components directly from `@angular/material` (standalone imports per component).
+- Prefer Material form field structure:
+  - Wrap inputs inside `<mat-form-field>`
+  - Use `matInput` directive for inputs
+
+- Use Material styling and theming; avoid custom UI unless necessary.
+- Ensure accessibility:
+  - Use proper `mat-label`
+  - Ensure focus states and keyboard navigation are preserved
+
+- Use `MatDialog` for any modal-based forms or confirmations, passing data via `MAT_DIALOG_DATA` and returning results via `MatDialogRef`.
+- Keep Material usage consistent across the application for a unified UX.
