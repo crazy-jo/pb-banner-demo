@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+mat-card {
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  height: 240px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: var(--mat-sys-level3);
+  }
+}
+.card-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.card-body {
+  padding: 8px 12px;
+}
+.card-name {
+  font-weight: 500;
+  font-size: 0.95rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.delete-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}

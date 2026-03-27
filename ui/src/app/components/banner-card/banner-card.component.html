@@ -1,0 +1,19 @@
+<mat-card
+  (click)="cardClick.emit(banner())"
+  role="button"
+  [attr.aria-label]="'Open banner ' + banner().name"
+>
+  <img class="card-image" [src]="banner().imageUrl" [alt]="banner().name" />
+  <div class="card-body">
+    <div class="card-name">{{ banner().name }}</div>
+  </div>
+  <button
+    mat-icon-button
+    class="delete-btn"
+    color="warn"
+    aria-label="Delete banner"
+    (click)="$event.stopPropagation(); deleteClick.emit(banner())"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+</mat-card>

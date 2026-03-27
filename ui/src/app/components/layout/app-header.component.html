@@ -1,0 +1,14 @@
+<mat-toolbar>
+  @if (showBack()) {
+    <button mat-icon-button class="back-btn" (click)="goBack()" aria-label="Go back">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  }
+  <span class="title">{{ pageTitle() }}</span>
+  @if (showAddButton()) {
+    <button mat-flat-button [routerLink]="['/banners/new']" aria-label="Add new banner">
+      <mat-icon>add</mat-icon>
+      Add new banner
+    </button>
+  }
+</mat-toolbar>

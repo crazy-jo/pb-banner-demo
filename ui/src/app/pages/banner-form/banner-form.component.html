@@ -1,0 +1,85 @@
+<app-header [pageTitle]="pageTitle()" [showBack]="true" [showAddButton]="false" />
+<div class="page-content">
+  @if (loadError()) {
+    <div class="error-banner" role="alert">Failed to load banner data.</div>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <!-- Image preview + upload -->
+      <div class="image-preview-wrapper">
+        @if (imagePreview()) {
+          <img
+            class="image-preview"
+            [src]="imagePreview()"
+            [alt]="form.value.name || 'Banner image'"
+          />
+        }
+        <label class="image-upload-label" for="imageFile">
+          <button type="button" mat-stroked-button (click)="fileInput.click()">
+            <mat-icon>upload</mat-icon>
+            {{ imagePreview() ? 'Change image' : 'Upload image' }}
+          </button>
+        </label>
+        <input
+          #fileInput
+          id="imageFile"
+          type="file"
+          accept="image/*"
+          (change)="onFileChange($event)"
+        />
+        @if (formSubmitted() && isCreate() && !imagePreview()) {
+          <div class="error-banner" role="alert">Image is required.</div>
+        }
+      </div>
+
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" placeholder="Banner name" />
+        @if (form.controls.name.invalid && formSubmitted()) {
+          <mat-error>Name is required.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="form-field" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          rows="4"
+          placeholder="Banner description"
+        ></textarea>
+        @if (form.controls.description.invalid && formSubmitted()) {
+          <mat-error>Description is required.</mat-error>
+        }
+      </mat-form-field>
+
+      @if (submitError()) {
+        <div class="error-banner" role="alert">{{ submitError() }}</div>
+      }
+
+      <div class="actions">
+        @if (!isCreate()) {
+          <button
+            type="button"
+            mat-stroked-button
+            color="warn"
+            [disabled]="submitting()"
+            (click)="confirmDelete()"
+          >
+            <mat-icon>delete</mat-icon>
+            Delete
+          </button>
+        } @else {
+          <span></span>
+        }
+
+        <button type="submit" mat-flat-button class="submit-btn" [disabled]="submitting()">
+          @if (submitting()) {
+            <mat-spinner diameter="20" />
+          } @else {
+            {{ isCreate() ? 'Create' : 'Save changes' }}
+          }
+        </button>
+      </div>
+    </form>
+  }
+</div>

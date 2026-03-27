@@ -1,0 +1,44 @@
+.page-content {
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.form-field {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.image-preview-wrapper {
+  margin-bottom: 16px;
+}
+.image-preview {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--mat-sys-outline-variant);
+  display: block;
+  margin-bottom: 8px;
+}
+.image-upload-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+input[type='file'] {
+  display: none;
+}
+.actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+.submit-btn {
+  min-width: 120px;
+}
+.error-banner {
+  color: var(--mat-sys-error);
+  padding: 8px 0;
+  font-size: 0.875rem;
+}

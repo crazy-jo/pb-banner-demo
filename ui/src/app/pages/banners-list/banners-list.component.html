@@ -1,0 +1,27 @@
+<app-header pageTitle="Banners List" [showBack]="false" [showAddButton]="true" />
+<div class="page-content">
+  @if (loading()) {
+    <div class="loading-wrapper">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (error()) {
+    <div class="error-state" role="alert">
+      <p>Failed to load banners. Please try again.</p>
+      <button mat-flat-button (click)="reload()">Retry</button>
+    </div>
+  } @else if (banners().length === 0) {
+    <div class="empty-state">
+      <p>No banners yet. Click "Add new banner" to create one.</p>
+    </div>
+  } @else {
+    <div class="banners-grid">
+      @for (banner of banners(); track banner.id) {
+        <app-banner-card
+          [banner]="banner"
+          (cardClick)="openDetails($event)"
+          (deleteClick)="confirmDelete($event)"
+        />
+      }
+    </div>
+  }
+</div>

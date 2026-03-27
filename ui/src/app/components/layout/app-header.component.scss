@@ -1,0 +1,16 @@
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--mat-sys-surface-container);
+  border-bottom: 1px solid var(--mat-sys-outline-variant);
+  gap: 8px;
+}
+.title {
+  flex: 1;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+.back-btn {
+  margin-right: 4px;
+}
