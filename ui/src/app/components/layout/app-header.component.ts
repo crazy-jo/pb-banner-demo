@@ -4,6 +4,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
+import { AppHeaderService } from '../../services/app-header.service';
+
 @Component({
   selector: 'app-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -12,10 +14,9 @@ import { MatIconModule } from '@angular/material/icon';
   templateUrl: './app-header.component.html',
 })
 export class AppHeaderComponent {
-  readonly pageTitle = input<string>('');
-  readonly showBack = input<boolean>(false);
-  readonly showAddButton = input<boolean>(false);
-
+  readonly pageTitle = inject(AppHeaderService).pageTitle;
+  readonly showBack = inject(AppHeaderService).showBack;
+  readonly showAddButton = inject(AppHeaderService).showAddButton;
   private readonly router = inject(Router);
 
   goBack(): void {

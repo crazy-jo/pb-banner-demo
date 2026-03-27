@@ -1,10 +1,11 @@
 import {
+  type OnInit,
+  type OnDestroy,
   ChangeDetectionStrategy,
   Component,
   inject,
   signal,
   computed,
-  OnInit,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
@@ -18,7 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { Banner, BannerImage } from '../../models/banner.model';
 import { BannerService } from '../../services/banner.service';
-import { AppHeaderComponent } from '../../components/layout/app-header.component';
+import { AppHeaderService } from '../../services/app-header.service';
 import {
   DeleteAlertDialogComponent,
   DeleteAlertDialogData,
@@ -28,7 +29,6 @@ import {
   selector: 'app-banner-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AppHeaderComponent,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
@@ -40,10 +40,11 @@ import {
   styleUrl: './banner-form.component.scss',
   templateUrl: './banner-form.component.html',
 })
-export class BannerFormComponent implements OnInit {
+export class BannerFormComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly bannerService = inject(BannerService);
+  private readonly appHeaderService = inject(AppHeaderService);
   private readonly dialog = inject(MatDialog);
   private readonly fb = inject(FormBuilder);
 
@@ -64,6 +65,7 @@ export class BannerFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.appHeaderService.setPageHeaderData({ title: this.pageTitle(), showBack: true });
     const banner = this.banner();
     if (banner) {
       this.form.patchValue({
@@ -72,6 +74,10 @@ export class BannerFormComponent implements OnInit {
       });
       this.imagePreview.set(banner.imageUrl);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.appHeaderService.resetHeaderData();
   }
 
   onFileChange(event: Event): void {
