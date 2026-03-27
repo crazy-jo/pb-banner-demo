@@ -1,9 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+import { environment } from '../../environments/environment';
 import { Banner, CreateBannerDto, UpdateBannerDto } from '../models/banner.model';
 
-const API_URL = 'http://localhost:3000/banners';
+const API_URL = `${environment.backendApiUrl}/banners`;
 
 @Injectable({ providedIn: 'root' })
 export class BannerService {
