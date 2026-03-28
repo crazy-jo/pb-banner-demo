@@ -23,8 +23,8 @@ export class BannerService {
     return this.http.post<Banner>(API_URL, dto);
   }
 
-  updateBanner(id: number, dto: UpdateBannerDto): Observable<void> {
-    return this.http.put<void>(`${API_URL}/${id}`, dto);
+  updateBanner(id: number, dto: UpdateBannerDto): Observable<Banner> {
+    return this.http.put<Banner>(`${API_URL}/${id}`, dto);
   }
 
   deleteBanner(id: number): Observable<void> {

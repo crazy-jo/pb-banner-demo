@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { injectDispatch } from '@ngrx/signals/events';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -18,12 +19,13 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Banner, BannerImage } from '../../models/banner.model';
-import { BannerService } from '../../services/banner.service';
 import { AppHeaderService } from '../../services/app-header.service';
 import {
   DeleteAlertDialogComponent,
   DeleteAlertDialogData,
 } from '../../components/delete-alert-dialog/delete-alert-dialog.component';
+import { bannerEvents } from '../../stores/banner/banner.events';
+import { BannerStore } from '../../stores/banner/banner.store';
 
 @Component({
   selector: 'app-banner-form',
@@ -43,17 +45,15 @@ import {
 export class BannerFormComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly bannerService = inject(BannerService);
   private readonly appHeaderService = inject(AppHeaderService);
   private readonly dialog = inject(MatDialog);
   private readonly fb = inject(FormBuilder);
+  private readonly dispatch = injectDispatch(bannerEvents);
 
+  readonly store = inject(BannerStore);
   readonly isCreate = computed(() => !this.route.snapshot.paramMap.get('id'));
   readonly pageTitle = computed(() => (this.isCreate() ? 'Create Banner' : 'Banner Details'));
-  readonly banner = signal<Banner | null>(this.route.snapshot.data['banner'] ?? null);
   readonly loadError = signal(false);
-  readonly submitting = signal(false);
-  readonly submitError = signal<string | null>(null);
   readonly imagePreview = signal<string | null>(null);
   readonly formSubmitted = signal(false);
 
@@ -66,13 +66,16 @@ export class BannerFormComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.appHeaderService.setPageHeaderData({ title: this.pageTitle(), showBack: true });
-    const banner = this.banner();
-    if (banner) {
-      this.form.patchValue({
-        name: banner.name,
-        description: banner.description,
-      });
-      this.imagePreview.set(banner.imageUrl);
+    if (!this.isCreate()) {
+      const id = Number(this.route.snapshot.paramMap.get('id'));
+      const banner = this.store.banners().find((banner) => banner.id === id);
+      if (banner) {
+        this.form.patchValue({
+          name: banner.name,
+          description: banner.description,
+        });
+        this.imagePreview.set(banner.imageUrl);
+      }
     }
   }
 
@@ -106,26 +109,13 @@ export class BannerFormComponent implements OnInit, OnDestroy {
     if (this.form.invalid) return;
 
     const { name, description } = this.form.getRawValue();
-    this.submitting.set(true);
-    this.submitError.set(null);
 
     if (this.isCreate()) {
-      this.bannerService
-        .createBanner({
-          name: name!,
-          description: description!,
-          imageData: this.selectedImageData!,
-        })
-        .subscribe({
-          next: () => {
-            this.submitting.set(false);
-            this.router.navigate(['/banners']);
-          },
-          error: () => {
-            this.submitting.set(false);
-            this.submitError.set('Failed to create banner. Please try again.');
-          },
-        });
+      this.dispatch.createBanner({
+        name: name!,
+        description: description!,
+        imageData: this.selectedImageData!,
+      });
     } else {
       const id = Number(this.route.snapshot.paramMap.get('id'));
       const dto: { name?: string; description?: string; imageData?: BannerImage } = {
@@ -135,21 +125,13 @@ export class BannerFormComponent implements OnInit, OnDestroy {
       if (this.selectedImageData) {
         dto.imageData = this.selectedImageData;
       }
-      this.bannerService.updateBanner(id, dto).subscribe({
-        next: () => {
-          this.submitting.set(false);
-          this.router.navigate(['/banners']);
-        },
-        error: () => {
-          this.submitting.set(false);
-          this.submitError.set('Failed to update banner. Please try again.');
-        },
-      });
+      this.dispatch.updateBanner({ id, dto });
     }
   }
 
   confirmDelete(): void {
-    const banner = this.banner();
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    const banner = this.store.banners().find((banner) => banner.id === id);
     if (!banner) return;
 
     const dialogRef = this.dialog.open<DeleteAlertDialogComponent, DeleteAlertDialogData, boolean>(
@@ -159,12 +141,8 @@ export class BannerFormComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe((confirmed) => {
       if (confirmed) {
-        this.bannerService.deleteBanner(banner.id).subscribe({
-          next: () => this.router.navigate(['/banners']),
-          error: () => {
-            this.submitError.set('Failed to delete banner. Please try again.');
-          },
-        });
+        this.dispatch.deleteBanner({ id });
+        this.router.navigate(['/banners']);
       }
     });
   }
