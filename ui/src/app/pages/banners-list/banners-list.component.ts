@@ -4,21 +4,22 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { injectDispatch } from '@ngrx/signals/events';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 
 import { Banner } from '../../models/banner.model';
-import { BannerService } from '../../services/banner.service';
 import { AppHeaderService } from '../../services/app-header.service';
 import { BannerCardComponent } from '../../components/banner-card/banner-card.component';
 import {
   DeleteAlertDialogComponent,
   DeleteAlertDialogData,
 } from '../../components/delete-alert-dialog/delete-alert-dialog.component';
+import { BannerStore } from '../../stores/banner/banner.store';
+import { bannerEvents } from '../../stores/banner/banner.events';
 
 @Component({
   selector: 'app-banners-list',
@@ -28,15 +29,12 @@ import {
   templateUrl: './banners-list.component.html',
 })
 export class BannersListComponent implements OnInit, OnDestroy {
-  private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly dialog = inject(MatDialog);
-  private readonly bannerService = inject(BannerService);
   private readonly appHeaderService = inject(AppHeaderService);
 
-  readonly banners = signal<Banner[]>(this.route.snapshot.data['banners'] ?? []);
-  readonly loading = signal(false);
-  readonly error = signal(false);
+  readonly store = inject(BannerStore);
+  private readonly dispatch = injectDispatch(bannerEvents);
 
   ngOnInit(): void {
     this.appHeaderService.setPageHeaderData({
@@ -68,28 +66,10 @@ export class BannersListComponent implements OnInit, OnDestroy {
   }
 
   reload(): void {
-    this.loading.set(true);
-    this.error.set(false);
-    this.bannerService.getBanners().subscribe({
-      next: (banners) => {
-        this.banners.set(banners);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set(true);
-        this.loading.set(false);
-      },
-    });
+    this.dispatch.startLoadingBanners();
   }
 
   private deleteBanner(id: number): void {
-    this.bannerService.deleteBanner(id).subscribe({
-      next: () => {
-        this.banners.update((list) => list.filter((b) => b.id !== id));
-      },
-      error: () => {
-        alert('Failed to delete banner. Please try again.');
-      },
-    });
+    this.dispatch.deleteBanner({ id });
   }
 }

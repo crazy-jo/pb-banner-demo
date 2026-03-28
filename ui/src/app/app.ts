@@ -1,18 +1,25 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { injectDispatch } from '@ngrx/signals/events';
 
 import { AppHeaderComponent } from './components/layout/app-header.component';
-import { LoadingService } from './services/loading.service';
+import { bannerEvents } from './stores/banner/banner.events';
+import { BannerStore } from './stores/banner/banner.store';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet, MatProgressBarModule, AppHeaderComponent],
+  imports: [RouterOutlet, AppHeaderComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App {
-  readonly isLoading = inject(LoadingService).isLoading;
+export class App implements OnInit {
+  readonly store = inject(BannerStore);
+  protected readonly dispatch = injectDispatch(bannerEvents);
   protected readonly title = signal('pb-banner-demo');
+
+  ngOnInit(): void {
+    // Trigger initial data loading.
+    this.dispatch.startLoadingBanners();
+  }
 }

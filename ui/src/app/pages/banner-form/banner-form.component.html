@@ -51,8 +51,8 @@
         }
       </mat-form-field>
 
-      @if (submitError()) {
-        <div class="error-banner" role="alert">{{ submitError() }}</div>
+      @if (store.error()) {
+        <div class="error-banner" role="alert">{{ store.error() }}</div>
       }
 
       <div class="actions">
@@ -61,7 +61,7 @@
             type="button"
             mat-stroked-button
             color="warn"
-            [disabled]="submitting()"
+            [disabled]="store.isLoading()"
             (click)="confirmDelete()"
           >
             <mat-icon>delete</mat-icon>
@@ -71,8 +71,8 @@
           <span></span>
         }
 
-        <button type="submit" mat-flat-button class="submit-btn" [disabled]="submitting()">
-          @if (submitting()) {
+        <button type="submit" mat-flat-button class="submit-btn" [disabled]="store.isLoading()">
+          @if (store.isLoading()) {
             <mat-spinner diameter="20" />
           } @else {
             {{ isCreate() ? 'Create' : 'Save changes' }}

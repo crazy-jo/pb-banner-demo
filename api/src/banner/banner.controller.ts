@@ -56,6 +56,7 @@ export class BannerController {
       throw new NotFoundException(`Banner with id ${id} not found`);
     }
     await this.bannerService.updateBanner(id, banner);
+    return this.bannerService.getBannerById(id);
   }
 
   @Post()
